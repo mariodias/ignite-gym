@@ -1,10 +1,15 @@
-import { Text, View, StatusBar } from 'react-native';
+import { StatusBar } from 'react-native';
+import { GluestackUIProvider } from '@gluestack-ui/themed';
+import { config } from './config/gluestack-ui.config';
 import {
   useFonts,
   Roboto_400Regular,
   Roboto_500Medium,
   Roboto_700Bold,
 } from '@expo-google-fonts/roboto';
+
+import { Loading } from '@components/Loading';
+import { Routes } from '@routes/index';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -14,9 +19,15 @@ export default function App() {
   });
 
   return (
-    <View style={{flex: 1, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center'}}>
-      <StatusBar barStyle="light-content" backgroundColor='transparent' translucent />
-      { fontsLoaded ? <Text>Open up App.tsx to start working on your app!</Text> : <View />}
-    </View>
+      <GluestackUIProvider config={config}>
+        <StatusBar 
+          barStyle="light-content" 
+          backgroundColor='transparent' 
+          translucent />
+
+        { fontsLoaded ? <Routes />
+          : <Loading />
+        }
+      </GluestackUIProvider>
   );
-}
+  }
