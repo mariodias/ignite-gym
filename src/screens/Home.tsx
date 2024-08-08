@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { FlatList } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { HStack, VStack, Text, Heading } from '@gluestack-ui/themed';
+
 import { Group } from '@components/Group';
 import { HomeHeader } from '@components/HomeHeader';
-import { HStack, VStack, Text, Heading } from '@gluestack-ui/themed';
 import { ExerciseCard } from '@components/ExerciseCard';
-import { useNavigation } from '@react-navigation/native';
+
 import { AppNavigatorRoutesProps } from '@routes/App.routes';
 
 export function Home(){

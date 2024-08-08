@@ -1,11 +1,9 @@
-import { Heading, HStack, Image, Text, VStack, Icon } from "@gluestack-ui/themed";
-import { ChevronRight } from "lucide-react-native";
-import { TouchableOpacity, TouchableOpacityProps } from "react-native";
+import { TouchableOpacityProps } from "react-native";
+import { Heading, HStack, Text, VStack } from "@gluestack-ui/themed";
 
 type Props = TouchableOpacityProps & {
   name?: string;
 }
-
 
 export function HistoryCard({name, ...rest }: Props) {
   return (

@@ -1,8 +1,7 @@
-import { Image, Heading, HStack, VStack, Text } from '@gluestack-ui/themed';
 import { ComponentProps } from 'react';
+import { Image } from '@gluestack-ui/themed';
 
 type Props = ComponentProps<typeof Image>;
-
 
 export function UserPhoto({...rest}: Props){
   return (

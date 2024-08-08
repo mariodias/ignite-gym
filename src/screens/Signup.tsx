@@ -1,12 +1,12 @@
-import { VStack, Image, Center, Text, Heading, ScrollView } from "@gluestack-ui/themed";
 import { useNavigation } from "@react-navigation/native";
-
+import { VStack, Image, Center, Text, Heading, ScrollView } from "@gluestack-ui/themed";
 //import { AuthNavigatorRoutesProps } from "@routes/Auth.routes";
+
+import { Input } from "@components/Input";
+import { Button } from "@components/Button";
 
 import BackgroundImg from '@assets/background.png';
 import Logo from '@assets/logo.svg';
-import { Input } from "@components/Input";
-import { Button } from "@components/Button";
 
 export function Signup(){
 

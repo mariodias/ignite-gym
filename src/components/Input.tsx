@@ -1,9 +1,10 @@
-import { Input as GlueStackInput, InputField } from '@gluestack-ui/themed';
 import { ComponentProps } from 'react';
+import { Input as GlueStackInput, InputField } from '@gluestack-ui/themed';
 
 type Props = ComponentProps<typeof InputField> & {
   isReadOnly?: boolean;
 }
+
 export function Input({ isReadOnly = false, ...rest }: Props) {
   return (
     <GlueStackInput 

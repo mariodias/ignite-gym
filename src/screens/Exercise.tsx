@@ -1,13 +1,15 @@
 import { TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { ArrowLeft } from 'lucide-react-native';
 import { Heading, HStack, Icon, VStack, Text, Image, Box } from '@gluestack-ui/themed';
+import { ArrowLeft } from 'lucide-react-native';
+
+import { AppNavigatorRoutesProps } from '@routes/App.routes';
+
+import { Button } from '@components/Button';
+
 import BodySvg from '@assets/body.svg';
 import SeriesSvg from '@assets/series.svg';
 import RepetitionsSvg from '@assets/repetitions.svg';
-
-import { AppNavigatorRoutesProps } from '@routes/App.routes';
-import { Button } from '@components/Button';
 
 export function Exercise(){
 

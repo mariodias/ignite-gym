@@ -1,11 +1,13 @@
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
-import { gluestackUIConfig } from "../../config/gluestack-ui.config";
 import { Box } from "@gluestack-ui/themed";
+
+import { gluestackUIConfig } from "../../config/gluestack-ui.config";
 
 import { AuthRoutes } from "./Auth.routes";
 import { AppRoutes } from "./App.routes";
 
 export function Routes() {
+
   const theme = DefaultTheme;
   theme.colors.background = gluestackUIConfig.tokens.colors.gray700;
 
