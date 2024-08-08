@@ -1,12 +1,16 @@
 import { Heading, Center } from '@gluestack-ui/themed';
 
-export function ScreenHeader(){
+type Props = {
+  title: string
+}
+
+export function ScreenHeader({ title }: Props){
   return (
     <Center 
       bg="$gray600" 
       pt="$16" 
       pb="$6">
-      <Heading color="$gray100" fontSize="$xl" fontFamily="$heading">Histórico</Heading>
+      <Heading color="$gray100" fontSize="$xl" fontFamily="$heading">{title}</Heading>
     </Center>
   );
 }
