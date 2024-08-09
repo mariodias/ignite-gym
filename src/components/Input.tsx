@@ -1,13 +1,20 @@
 import { ComponentProps } from 'react';
-import { Input as GlueStackInput, InputField } from '@gluestack-ui/themed';
+import { Input as GlueStackInput, InputField, FormControl, FormControlErrorText, FormControlError } from '@gluestack-ui/themed';
 
 type Props = ComponentProps<typeof InputField> & {
   isReadOnly?: boolean;
+  errorMessage?: string | null;
+  isInvalid?: boolean;
 }
 
-export function Input({ isReadOnly = false, ...rest }: Props) {
+export function Input({ isReadOnly = false, errorMessage = null, isInvalid = false, ...rest }: Props) {
+
+  const invalid = isInvalid || !!errorMessage;
+
   return (
+  <FormControl isInvalid={invalid} w="$full" mb="$4">
     <GlueStackInput 
+      isInvalid={invalid}
       h="$14" 
       borderWidth="$0" 
       borderRadius="$md"
@@ -15,7 +22,11 @@ export function Input({ isReadOnly = false, ...rest }: Props) {
       opacity={isReadOnly ? 0.5 : 1}
       $focus={{
         borderWidth: '$1',
-        borderColor: '$green500'
+        borderColor: invalid ? '$red500' : '$green500'
+      }}
+      $invalid={{
+        borderWidth: '$1',
+        borderColor: '$red500'
       }}
       
       >
@@ -27,6 +38,10 @@ export function Input({ isReadOnly = false, ...rest }: Props) {
         placeholderTextColor="$gray300"
         {...rest} />
 
-    </GlueStackInput>
+     </GlueStackInput>
+     <FormControlError>
+    <FormControlErrorText color="$red500">{errorMessage}</FormControlErrorText>
+    </FormControlError>
+  </FormControl>
   );
 }
