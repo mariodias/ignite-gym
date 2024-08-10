@@ -9,7 +9,7 @@
       "@screens/*": ["./src/screens/*"],
       "@storage/*": ["./src/storage/*"],
       "@utils/*": ["./src/utils/*"],
-      "@services/*": ["./src/services/*"],
+      "@service/*": ["./src/service/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@contexts/*": ["./src/contexts/*"],
       "@routes/*": ["./src/routes/*"]

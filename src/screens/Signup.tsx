@@ -2,14 +2,18 @@ import { useNavigation } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { VStack, Image, Center, Text, Heading, ScrollView } from "@gluestack-ui/themed";
-//import { AuthNavigatorRoutesProps } from "@routes/Auth.routes";
+import { VStack, Image, Center, Text, Heading, ScrollView, useToast } from "@gluestack-ui/themed";
+
+import { api } from "@service/api";
+import { AppError } from "@utils/AppError";
 
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
+import { ToastMessage } from '@components/ToastMessage';
 
 import BackgroundImg from '@assets/background.png';
 import Logo from '@assets/logo.svg';
+
 
 type FormDataProps = {
   name: string;
@@ -34,6 +38,7 @@ const signupSchema = Yup.object({
 
 export function Signup(){
 
+  const toast = useToast();
   const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>(
     {
       resolver: yupResolver(signupSchema)
@@ -46,9 +51,31 @@ export function Signup(){
     navigator.goBack();
   }
 
-  function handleCreateAccount({ name, email, password, passwordConfirmation }: FormDataProps){
-    console.log({ name, email, password, passwordConfirmation });
-  }
+  async function handleCreateAccount({ name, email, password }: FormDataProps){
+  try {
+   const response = await api.post('/users', {
+      name,
+      email,
+      password
+    });
+
+    console.log(response.data);
+  } catch (error) {
+    const isAppError = error instanceof AppError;
+    const errorMessage = isAppError ? error.message : 'Erro de servidor, tente novamente mais tarde.';
+    toast.show({
+      placement: 'top',
+      render: ({ id }) => (
+        <ToastMessage 
+          id={id}
+          title="Erro ao criar a conta."
+          description={`${email}: ${errorMessage}`}
+          action="error"
+          onClose={() => toast.close(id)} />
+      )
+     })
+ }
+}
 
   return (
   <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
