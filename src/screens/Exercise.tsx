@@ -1,23 +1,73 @@
+import { useEffect, useState } from 'react';
 import { TouchableOpacity, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Heading, HStack, Icon, VStack, Text, Image, Box } from '@gluestack-ui/themed';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { Heading, HStack, Icon, VStack, Text, Image, Box, useToast, set } from '@gluestack-ui/themed';
 import { ArrowLeft } from 'lucide-react-native';
 
 import { AppNavigatorRoutesProps } from '@routes/App.routes';
 
 import { Button } from '@components/Button';
+import { ToastMessage } from '@components/ToastMessage';
+import { Loading } from '@components/Loading';
+
+import { AppError } from '@utils/AppError';
+import { api } from '@service/api';
+import { ExerciseDTO } from '@dtos/ExerciseDTO';
 
 import BodySvg from '@assets/body.svg';
 import SeriesSvg from '@assets/series.svg';
 import RepetitionsSvg from '@assets/repetitions.svg';
 
+
+type RouteParamsProps = {
+  exerciseId: string;
+}
+
 export function Exercise(){
 
+  const [isLoading, setIsLoading] = useState(true);
+  const [exercise, setExercise] = useState<ExerciseDTO>({} as ExerciseDTO);
+
   const navigator = useNavigation<AppNavigatorRoutesProps>();
+  const route = useRoute();
+  const { exerciseId } = route.params as RouteParamsProps;
+
+  const toast = useToast();
 
   function handleGoBack(){
     navigator.goBack();
   }
+
+  async function handleFetchExerciseDetails(){
+    try {
+      setIsLoading(true);
+      const response = await api.get(`/exercises/${exerciseId}`);
+      const data = response.data;
+      setExercise(data);
+
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError ? error.message : 'Não foi obter os detalhes dos exercícios';
+
+      toast.show({
+        placement: 'top',
+        render: ({ id }) => (
+          <ToastMessage 
+            id={id}
+            title="Erro de carregamento."
+            description={`${title}`}
+            action="error"
+            onClose={() => toast.close(id)} />
+        )
+    })
+  } finally {
+      setIsLoading(false);
+  }
+}
+
+useEffect(() => {
+  handleFetchExerciseDetails();
+}, [exerciseId]);
 
   return (
     <VStack flex={1}>
@@ -35,40 +85,44 @@ export function Exercise(){
             fontSize="$lg" 
             fontFamily="$heading"
             flexShrink={1}>
-              Puxada Frontal
+              {exercise.name}
           </Heading>
           <HStack alignItems="center">
             <BodySvg />
-            <Text color="$gray200" ml="$1" textTransform="capitalize">Costas</Text>
+            <Text color="$gray200" ml="$1" textTransform="capitalize">{exercise.group}</Text>
           </HStack>
         </HStack>
       </VStack>
       <ScrollView 
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 32 }}>
+    { isLoading ? <Loading /> :
       <VStack p="$8">
+      <Box rounded="$lg" mb={3} overflow="hidden">
         <Image 
-          source={{uri: "https://images.unsplash.com/photo-1575052814074-c05122e0a17a?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}} 
+          source={{uri: `${api.defaults.baseURL}/exercise/demo/${exercise.demo}`}} 
           w="$full" 
           h="$80"
           mb="$3" 
           resizeMode="cover" 
           rounded="$lg"
           alt="Imagem do exercício" />
+          </Box>
           <Box bg="$gray600" rounded="$md" pb="$4" px="$4">
             <HStack justifyContent="space-around" alignItems="center" mt="$5" mb="$6">
               <HStack>
                 <SeriesSvg />
-                <Text color="$gray200" ml="$2">4 séries</Text>
+                <Text color="$gray200" ml="$2">{exercise.series} séries</Text>
               </HStack>
               <HStack>
                 <RepetitionsSvg />
-                <Text color="$gray200" ml="$2">12 repetições</Text>
+                <Text color="$gray200" ml="$2">{exercise.repetitions} repetições</Text>
               </HStack>
               </HStack>
               <Button title="Marcar como feito"/>
           </Box>
       </VStack>
+}
       </ScrollView>
     </VStack>
   );

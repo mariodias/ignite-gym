@@ -13,10 +13,10 @@ import HistorySvg from "@assets/history.svg";
 import ProfileSvg from "@assets/profile.svg";
 
 type AppRoutes = {
-  Home: undefined;
-  Exercise: undefined;
-  History: undefined;
-  Profile: undefined;
+  home: undefined;
+  exercise: { exerciseId: string };
+  history: undefined;
+  profile: undefined;
 }
 
 export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutes>;
@@ -45,7 +45,7 @@ export function AppRoutes() {
         }}
       >
       <Screen 
-        name="Home" 
+        name="home" 
         component={Home}
         options={
           {
@@ -55,7 +55,7 @@ export function AppRoutes() {
       /> 
 
       <Screen 
-        name= "History" 
+        name= "history" 
         component={History}
         options={
           {
@@ -65,7 +65,7 @@ export function AppRoutes() {
       />
 
       <Screen 
-        name= "Profile" 
+        name= "profile" 
         component={Profile}        
         options={
           {
@@ -75,7 +75,7 @@ export function AppRoutes() {
       />
 
       <Screen 
-        name="Exercise" 
+        name="exercise" 
         component={Exercise}
         options={{
           tabBarButton: () => null

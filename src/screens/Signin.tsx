@@ -32,7 +32,7 @@ export function Signin(){
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>()
 
   function handleNavigateToSignup(){
-    navigator.navigate('Signup');
+    navigator.navigate('signup');
   }
 
   async function handleSignIn({ email, password }: FormData){
