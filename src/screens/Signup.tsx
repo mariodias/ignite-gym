@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
 import * as Yup from "yup";
@@ -5,6 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { VStack, Image, Center, Text, Heading, ScrollView, useToast } from "@gluestack-ui/themed";
 
 import { api } from "@service/api";
+import { useAuth } from "@hooks/useAuth";
 import { AppError } from "@utils/AppError";
 
 import { Input } from "@components/Input";
@@ -38,12 +40,15 @@ const signupSchema = Yup.object({
 
 export function Signup(){
 
+  const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
   const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>(
     {
       resolver: yupResolver(signupSchema)
     }
   );
+
+  const { signIn } = useAuth();
 
   const navigator = useNavigation();
 
@@ -53,14 +58,13 @@ export function Signup(){
 
   async function handleCreateAccount({ name, email, password }: FormDataProps){
   try {
-   const response = await api.post('/users', {
-      name,
-      email,
-      password
-    });
+    setIsLoading(true);
+    await api.post('/users', { name, email, password });
 
-    console.log(response.data);
+    await signIn(email, password);
+    
   } catch (error) {
+    setIsLoading(false);
     const isAppError = error instanceof AppError;
     const errorMessage = isAppError ? error.message : 'Erro de servidor, tente novamente mais tarde.';
     toast.show({
@@ -154,12 +158,17 @@ export function Signup(){
             />
           )}
         />
-          <Button title="Criar conta" onPress={handleSubmit(handleCreateAccount)}/>
+          <Button 
+            title="Criar conta" 
+            isLoading={isLoading}
+            onPress={handleSubmit(handleCreateAccount)}/>
         </Center>
 
-          <Button title="Fazer login" variant="outline" mt="$12" onPress={() => handleNavigateToSignin()} />
-
-
+          <Button 
+            title="Fazer login" 
+            variant="outline" 
+            mt="$12" 
+            onPress={() => handleNavigateToSignin()} />
       </VStack>
     </VStack>
   </ScrollView>

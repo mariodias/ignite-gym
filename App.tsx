@@ -8,6 +8,8 @@ import {
   Roboto_700Bold,
 } from '@expo-google-fonts/roboto';
 
+import { AuthContextProvider } from '@contexts/AuthContext';
+
 import { Loading } from '@components/Loading';
 import { Routes } from '@routes/index';
 
@@ -24,10 +26,9 @@ export default function App() {
           barStyle="light-content" 
           backgroundColor='transparent' 
           translucent />
-
-        { fontsLoaded ? <Routes />
-          : <Loading />
-        }
+        <AuthContextProvider>
+        { fontsLoaded ? <Routes /> : <Loading /> }
+        </AuthContextProvider>
       </GluestackUIProvider>
   );
   }
