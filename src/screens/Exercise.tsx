@@ -26,6 +26,7 @@ type RouteParamsProps = {
 export function Exercise(){
 
   const [isLoading, setIsLoading] = useState(true);
+  const [sendingRegister, setSendingRegister] = useState(false);
   const [exercise, setExercise] = useState<ExerciseDTO>({} as ExerciseDTO);
 
   const navigator = useNavigation<AppNavigatorRoutesProps>();
@@ -63,6 +64,46 @@ export function Exercise(){
   } finally {
       setIsLoading(false);
   }
+}
+
+async function handleExerciseHistoryRegister(){
+  try {
+
+    setSendingRegister(true);
+    await api.post('/history', { exercise_id: exerciseId });
+
+    toast.show({
+      placement: 'top',
+      render: ({ id }) => (
+        <ToastMessage 
+          id={id}
+          title="Parabéns!"
+          description={`O treino ${exercise.name} foi registrado com sucesso.`}
+          action="success"
+          onClose={() => toast.close(id)} />
+      )
+  })
+
+    navigator.navigate('history');
+
+  } catch (error) {
+    const isAppError = error instanceof AppError;
+    const title = isAppError ? error.message : 'Não foi possível registrar o exercício.';
+
+    toast.show({
+      placement: 'top',
+      render: ({ id }) => (
+        <ToastMessage 
+          id={id}
+          title="Erro de carregamento."
+          description={`${title}`}
+          action="error"
+          onClose={() => toast.close(id)} />
+      )
+  })
+} finally {
+    setSendingRegister(false);
+ }
 }
 
 useEffect(() => {
@@ -119,7 +160,11 @@ useEffect(() => {
                 <Text color="$gray200" ml="$2">{exercise.repetitions} repetições</Text>
               </HStack>
               </HStack>
-              <Button title="Marcar como feito"/>
+              <Button 
+                title="Marcar como realizado"
+                isLoading={sendingRegister}
+                onPress={() => handleExerciseHistoryRegister()}
+                />
           </Box>
       </VStack>
 }
