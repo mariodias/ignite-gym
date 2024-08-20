@@ -145,20 +145,6 @@ export function Signup(){
 
         <Controller
           control={control}
-          name="password"
-          render={({ field: { onChange, value } }) => (
-            <Input 
-              placeholder="Senha"
-              onChangeText={onChange}
-              value={value}
-              errorMessage={errors.password?.message}
-              secureTextEntry
-            />
-          )} 
-        />
-
-        <Controller
-          control={control}
           name="passwordConfirmation"
           render={({ field: { onChange, value } }) => (
             <Input 

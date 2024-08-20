@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ScrollView, TouchableOpacity } from 'react-native';
-import { Center, Heading, Text, VStack, useToast } from '@gluestack-ui/themed';
+import { Center, Heading, Text, VStack, set, useToast } from '@gluestack-ui/themed';
 import { Controller, useForm } from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker'; 
 import * as FileSystem from 'expo-file-system';
@@ -16,6 +16,8 @@ import { ToastMessage } from '@components/ToastMessage';
 import { useAuth } from '@hooks/useAuth';
 import { AppError } from '@utils/AppError';
 import { api } from '@service/api';
+
+import defaultUserPhoto from '@assets/userPhotoDefault.png'
 
 type FormDataProps = {
   name: string;
@@ -51,8 +53,8 @@ const profileSchema = Yup.object().shape({
 export function Profile(){
 
   const [isUpdating, setIsUpdating] = useState(false);
-
   const { user, updateUserProfile } = useAuth();
+
   const toast = useToast();
 
   const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({ 
@@ -62,8 +64,6 @@ export function Profile(){
     },
     resolver: yupResolver(profileSchema) as any
   });
-
-  const [userPhoto, setUserPhoto] = useState("https://github.com/mariodias.png");
 
   async function handleUserPhotoSelect(){
     try {
@@ -98,10 +98,55 @@ export function Profile(){
         )
        })
       }
-      setUserPhoto(photoSelected.assets[0].uri);
+
+      const fileExtension = photoUri.split('.').pop();
+
+      const photoFile = {
+        name: `${user.name}.${fileExtension}`.toLocaleLowerCase(),
+        type: `${photoSelected.assets[0].type}/${fileExtension}`,
+        uri: photoUri
+      } as any;
+
+      const userPhotoUploadForm = new FormData();
+      userPhotoUploadForm.append('avatar', photoFile);
+
+      const avatarUpdatedResponse = await api.patch('/users/avatar', userPhotoUploadForm, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      const userUpdated = user;
+      userUpdated.avatar = avatarUpdatedResponse.data.avatar;
+      updateUserProfile(userUpdated);
+
+      toast.show({
+        placement: 'top',
+        render: ({ id }) => (
+          <ToastMessage 
+            id={id}
+            title="Atualização de perfil."
+            description={"Foto de perfil atualizada com êxito."}
+            action="success"
+            onClose={() => toast.close(id)} />
+        )
+    });
     }
   } catch (error) {
-    console.log(error);
+    const isAppError = error instanceof AppError;
+      const title = isAppError ? error.message : 'Não foi possível atualizar a foto de perfil.';
+
+      toast.show({
+        placement: 'top',
+        render: ({ id }) => (
+          <ToastMessage 
+            id={id}
+            title="Erro de atualização de dados."
+            description={`${title}`}
+            action="error"
+            onClose={() => toast.close(id)} />
+        )
+    })
    }
   }
 
@@ -155,7 +200,9 @@ export function Profile(){
       <ScrollView contentContainerStyle={{ paddingBottom: 36}}>
         <Center mt="$6" px="$10">
           <UserPhoto 
-            source={{uri: userPhoto}} 
+            source={user.avatar 
+              ? {uri: `${api.defaults.baseURL}/avatar/${user.avatar}`} 
+              : defaultUserPhoto}  
             size="xl"
             alt="Foto de perfil de usuário"/>
             <TouchableOpacity onPress={() => handleUserPhotoSelect()}>
